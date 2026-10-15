@@ -3,6 +3,7 @@
   'use strict';
   const types = ['text','heading','link','image','panel','widget'];
   const fonts = {
+    pixel: "'DotGothic16','Yu Gothic',Meiryo,sans-serif",
     sans: "'Yu Gothic','Hiragino Kaku Gothic ProN',Meiryo,sans-serif",
     serif: "'Yu Mincho','Hiragino Mincho ProN',serif",
     mono: "'Courier New',Meiryo,monospace",
@@ -52,8 +53,8 @@
     node.hidden = !!box.hidden;
     Object.assign(node.style,{
       left:`${box.x}px`,top:`${box.y}px`,width:`${box.w}px`,height:`${box.h}px`,
-      color:s.color || '#f2f5ff',background:s.background || 'transparent',fontFamily:fonts[s.font] || fonts.sans,
-      fontSize:`${s.fontSize || 16}px`,fontWeight:s.bold ? '700' : '400',lineHeight:s.lineHeight || 1.7,
+      color:s.color || '#f2f5ff',background:s.background || 'transparent',fontFamily:fonts[s.font] || fonts.pixel,
+      fontSize:`${s.fontSize || 16}px`,fontWeight:s.font === 'pixel' || !s.font ? '400' : s.bold ? '700' : '400',lineHeight:s.lineHeight || 1.7,
       textAlign:s.align || 'left',justifyContent: s.align === 'center' ? 'center' : s.align === 'right' ? 'flex-end' : 'flex-start',
       padding:`${s.padding || 0}px`,paddingLeft:`${s.paddingLeft ?? s.padding ?? 0}px`,paddingTop:`${s.paddingTop ?? s.padding ?? 0}px`,alignItems:s.vertical==='bottom'?'flex-end':s.vertical==='top'?'flex-start':'center',border:`${s.borderWidth || 0}px solid ${s.borderColor || 'transparent'}`,borderRadius:`${s.radius || 0}px`,
       opacity:s.opacity ?? 1,zIndex:s.z || 0,objectFit:s.fit === 'cover' ? 'cover' : 'contain'

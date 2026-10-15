@@ -1,0 +1,9 @@
+/* DotGothic16 © The DotGothic16 Project Authors — SIL OFL 1.1
+   元のフォント・ライセンス・配布元情報は assets/fonts/ に同梱。 */
+@font-face {
+  font-family: 'DotGothic16';
+  src: url('../fonts/DotGothic16-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

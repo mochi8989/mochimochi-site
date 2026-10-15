@@ -1,3 +1,5 @@
+@import url('./fonts.css');
+
 :root {
   --bg: #0b142c;
   --panel: #131f3d;
@@ -8,8 +10,9 @@
   --blue: #a8daff;
   --yellow: #f8e6a0;
   --shadow: #050d20;
-  --body-font: 'Yu Gothic', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-  --mono-font: 'Courier New', monospace;
+  --body-font: 'DotGothic16', 'Yu Gothic', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  --mono-font: 'DotGothic16', 'Courier New', Meiryo, monospace;
+  font-synthesis: none;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; color-scheme: dark; }

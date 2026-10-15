@@ -66,16 +66,18 @@
     for (const key of ['name','text','href','alt']) $('element-'+key).value=item[key] || '';
     for (const key of ['x','y','w','h']) $('element-'+key).value=Math.round(item[mode][key]);
     $('element-pixel').checked=!!item.pixel;$('element-hidden').checked=!!item[mode].hidden;
-    const s=item.style || {}; const defaults={font:'sans',fontSize:16,color:'#f2f5ff',align:'left',background:'#000000',radius:0,borderColor:'#344d71',borderWidth:0,z:0,fit:'contain'};
+    const s=item.style || {}; const defaults={font:'pixel',fontSize:16,color:'#f2f5ff',align:'left',background:'#000000',radius:0,borderColor:'#344d71',borderWidth:0,z:0,fit:'contain'};
     Object.entries(defaults).forEach(([key,fallback])=>{$('element-'+key).value=s[key]==='transparent'?fallback:s[key]??fallback;});
     $('element-bold').checked=!!s.bold;
+    $('element-bold').disabled=(s.font || 'pixel')==='pixel';
+    $('element-bold').title=(s.font || 'pixel')==='pixel'?'ドット書体はRegularの形を保つため、太字合成を行いません。':'';
   }
   function newElement(type,overrides={}) {
     const y=Math.round(($('canvas-scroll').scrollTop+45)/zoom);
     const base={id:uid(),type,name:{heading:'見出し',text:'テキスト',image:'画像',link:'リンクボタン',panel:'装飾パネル'}[type],text:type==='heading'?'新しい見出し':type==='text'?'ここにテキストを入力します。':type==='link'?'ホームへ戻る':'',href:type==='link'?'index.html':'',level:2,
       desktop:{x:300,y:mode==='desktop'?y:page().height.desktop+24,w:type==='panel'?300:360,h:type==='image'?180:type==='panel'?160:80},
       mobile:{x:24,y:mode==='mobile'?y:page().height.mobile+24,w:342,h:type==='image'?180:type==='panel'?160:80},
-      style:{font:'sans',fontSize:type==='heading'?30:18,bold:type==='heading'||type==='link',color:'#f2f5ff',background:type==='panel'?'#263d61':type==='link'?'#365bd1':'transparent',borderColor:'#6884b0',borderWidth:type==='link'?1:0,radius:type==='link'?8:0,padding:type==='link'?14:0,lineHeight:1.7,z:Math.max(0,...page().elements.map(e=>e.style?.z||0))+1},...overrides};
+      style:{font:'pixel',fontSize:type==='heading'?30:18,bold:type==='heading'||type==='link',color:'#f2f5ff',background:type==='panel'?'#263d61':type==='link'?'#365bd1':'transparent',borderColor:'#6884b0',borderWidth:type==='link'?1:0,radius:type==='link'?8:0,padding:type==='link'?14:0,lineHeight:1.7,z:Math.max(0,...page().elements.map(e=>e.style?.z||0))+1},...overrides};
     return base;
   }
   function fitAdded(item){for(const m of ['desktop','mobile'])page().height[m]=Math.min(30000,Math.max(page().height[m],item[m].y+item[m].h+40));}
@@ -108,6 +110,7 @@
   $('page-background').onchange=()=>mutate(()=>{page().background=$('page-background').value;});
   $('page-height').onchange=()=>mutate(()=>{page().height[mode]=Math.max(200,Math.min(30000,Number($('page-height').value)||1200));});
   $('clear-background').onclick=()=>mutate(()=>{page().backgroundImage='';});
+  $('pixel-page').onclick=()=>mutate(()=>{page().elements.filter(item=>['text','heading','link'].includes(item.type)).forEach(item=>{item.style.font='pixel';});},'このページの文字をドットゴシックに変更しました。');
   const themes={starry:{bg:'#0b142c',panel:'#182849',text:'#f2f5ff',button:'#a8daff',buttonText:'#10213b'},paper:{bg:'#f7f2e8',panel:'#e9e0cf',text:'#362e29',button:'#655044',buttonText:'#fffaf0'},garden:{bg:'#edf1e8',panel:'#d5e1d1',text:'#294737',button:'#3b6d51',buttonText:'#f2fff7'},pop:{bg:'#f0eaff',panel:'#dfd3fa',text:'#413369',button:'#7951c4',buttonText:'#ffffff'}};
   $('theme').onchange=()=>mutate(()=>{const theme=themes[$('theme').value];page().theme=$('theme').value;page().background=theme.bg;page().elements.forEach(item=>{item.style.color=item.type==='link'?theme.buttonText:theme.text;if(item.type==='panel')item.style.background=theme.panel;if(item.type==='link'){item.style.background=theme.button;item.style.radius=$('theme').value==='starry'?0:10;}if(item.role==='hero-art'){item.desktop.hidden=$('theme').value!=='starry';item.mobile.hidden=$('theme').value!=='starry';}});},'テーマを適用しました。明るいテーマでは初期の星空画像を隠しています。画像は個別に変更できます。');
   for(const m of ['desktop','mobile'])$(m).onclick=()=>{mode=m;selectedId=null;for(const n of ['desktop','mobile'])$(n).setAttribute('aria-pressed',String(n===mode));render();};
@@ -160,7 +163,7 @@
       if(type==='link'&&node.parentElement.closest('a'))return;
       const text=(node.innerText||'').trim();if(['text','heading','link'].includes(type)&&!text)return;
       const box={x:Math.round(rect.x),y:Math.round(rect.y+doc.defaultView.scrollY),w:Math.max(1,Math.round(rect.width)),h:Math.max(1,Math.round(rect.height))};
-      const item={id:`captured-${index}`,type,name:text.slice(0,30)||node.alt||'装飾',text,level:node.tagName==='H1'?1:2,box,style:{color:safeColor(css.color),background:type==='panel'||type==='link'?safeColor(css.backgroundColor):'transparent',font:/Courier|monospace/.test(css.fontFamily)?'mono':'sans',fontSize:parseFloat(css.fontSize),bold:Number(css.fontWeight)>=600,lineHeight:Math.max(.8,Math.min(5,parseFloat(css.lineHeight)/parseFloat(css.fontSize)||1.7)),borderColor:safeColor(css.borderColor),borderWidth:parseFloat(css.borderTopWidth)||0,radius:parseFloat(css.borderRadius)||0,padding:0,align:['left','center','right'].includes(css.textAlign)?css.textAlign:'left',z:type==='panel'?0:type==='image'?1:3}};
+      const item={id:`captured-${index}`,type,name:text.slice(0,30)||node.alt||'装飾',text,level:node.tagName==='H1'?1:2,box,style:{color:safeColor(css.color),background:type==='panel'||type==='link'?safeColor(css.backgroundColor):'transparent',font:/DotGothic16/.test(css.fontFamily)?'pixel':/Courier|monospace/.test(css.fontFamily)?'mono':'sans',fontSize:parseFloat(css.fontSize),bold:Number(css.fontWeight)>=600,lineHeight:Math.max(.8,Math.min(5,parseFloat(css.lineHeight)/parseFloat(css.fontSize)||1.7)),borderColor:safeColor(css.borderColor),borderWidth:parseFloat(css.borderTopWidth)||0,radius:parseFloat(css.borderRadius)||0,padding:0,align:['left','center','right'].includes(css.textAlign)?css.textAlign:'left',z:type==='panel'?0:type==='image'?1:3}};
       if(type==='link'){item.href=node.getAttribute('href')||'';item.style.padding=node.classList.contains('button')?9:node.closest('.menu')?8:0;item.style.fontSize=node.closest('.menu')?12:item.style.fontSize;if(node.classList.contains('destination')){item.style.background='#192a48';item.style.padding=16;item.style.fontSize=14;}if(node.classList.contains('brand'))item.style.fontSize=17;}
       if(type==='image'){const src=node.getAttribute('src')||'';if(!kit.safeImage(src))return;item.src=src;item.alt=node.alt;item.pixel=css.imageRendering==='pixelated';item.style.fit=css.objectFit==='cover'?'cover':'contain';if(node.classList.contains('hero-art'))item.style.z=1;}
       if(type==='image'&&node.tagName.toLowerCase()==='svg'){const href=node.closest('a')?.getAttribute('href');const key=href?.replace('.html','').replace('index','home');if(!['home','profile','gallery','games','shop','links'].includes(key))return;item.src=`assets/images/icon-${key}.svg`;item.alt='';item.pixel=true;item.style.z=4;}
@@ -185,7 +188,8 @@
       await frames();const doc=frame.contentDocument;
       // 画面外の取り込み用iframeでは遅延画像が表示領域に入らないため、ここだけ先に読み込む。
       [...doc.images].forEach(img=>{img.loading='eager';});
-      await Promise.all([...doc.images].map(img=>img.decode().catch(()=>{})));await frames();
+      await Promise.all([...doc.images].map(img=>img.decode().catch(()=>{})));
+      await doc.fonts.ready;await document.fonts.load('16px DotGothic16');await frames();
       const desktop=capture(doc);const desktopHeight=Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
       frame.style.width='390px';await frames();const mobile=capture(doc);const mobileHeight=Math.max(doc.body.scrollHeight,doc.documentElement.scrollHeight);
       const elements=desktop.map(item=>{const small=mobile.find(e=>e.id===item.id);const {box,...rest}=item;return{...rest,desktop:box,mobile:small?.box||{x:0,y:0,w:100,h:50,hidden:true}};});

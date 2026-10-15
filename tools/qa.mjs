@@ -22,7 +22,7 @@ function send(method,params={}){const id=++serial;return new Promise((resolve,re
 async function evaluate(expression){const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true,userGesture:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;}
 async function until(expression){for(let i=0;i<100;i++){if(await evaluate(expression))return;await delay(100);}throw Error('Timeout: '+expression);}
 async function viewport(width,height=1000){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<700});}
-async function navigate(url){await send('Page.navigate',{url});await until("document.readyState==='complete'");await delay(180);}
+async function navigate(url){await send('Page.navigate',{url});await until("document.readyState==='complete'");await evaluate('document.fonts.ready.then(()=>true)');await delay(180);}
 async function shot(name){const r=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await fs.writeFile(path.join(artifacts,name),Buffer.from(r.data,'base64'));}
 const base='http://127.0.0.1:4175/mochimochi-site/';
 try{
@@ -33,6 +33,7 @@ try{
    await navigate(base+name+'.html');
    const result=await evaluate(`({overflow:document.documentElement.scrollWidth>innerWidth+1,title:document.title,broken:[...document.images].filter(i=>i.complete&&i.naturalWidth===0).map(i=>i.src),current:document.querySelectorAll('[aria-current="page"]').length})`);
    assert.equal(result.overflow,false,`${name} overflow ${width}`);assert.equal(result.broken.length,0,`${name} broken images`);assert.equal(result.current,1);
+   assert.equal(await evaluate(`document.fonts.check('16px DotGothic16','ABC 日本語 漢字 配信') && getComputedStyle(document.body).fontFamily.startsWith('DotGothic16')`),true,`${name}: pixel font not loaded`);
    if(name==='index'&&[1440,390].includes(width))await shot(`home-${width}.png`);
   }report.push(`6 pages at ${width}px: no overflow / broken images`);
  }
@@ -48,9 +49,13 @@ try{
  await viewport(1600,1050);await navigate(base+'editor/');
  await until("document.querySelectorAll('#canvas .layout-element').length>20");
  assert.match(await evaluate("document.querySelector('#status').textContent"),/HOME|復元/);
+ assert.equal(await evaluate("[...document.querySelectorAll('#canvas .kind-heading')].every(node=>getComputedStyle(node).fontFamily.startsWith('DotGothic16'))"),true);
  await shot('editor-desktop.png');
  await evaluate("document.querySelector('[data-add=heading]').click();document.querySelector('#element-text').value='ビジュアル編集のテスト';document.querySelector('#element-text').dispatchEvent(new Event('change'))");
  assert.equal(await evaluate("[...document.querySelectorAll('#canvas h2')].some(e=>e.textContent==='ビジュアル編集のテスト')"),true);
+ assert.equal(await evaluate("document.querySelector('#element-font').value"),'pixel');
+ await evaluate("document.querySelector('#element-font').value='serif';document.querySelector('#element-font').dispatchEvent(new Event('change'));document.querySelector('#pixel-page').click()");
+ assert.equal(await evaluate("[...document.querySelectorAll('#canvas .kind-text,#canvas .kind-heading,#canvas .kind-link')].every(node=>getComputedStyle(node).fontFamily.startsWith('DotGothic16'))"),true);
  await evaluate("document.querySelector('#duplicate').click()");const count=await evaluate("document.querySelectorAll('#canvas .layout-element').length");
  await evaluate("document.querySelector('#delete').click()");assert.equal(await evaluate("document.querySelectorAll('#canvas .layout-element').length"),count-1);
  await evaluate("document.querySelector('#undo').click()");assert.equal(await evaluate("document.querySelectorAll('#canvas .layout-element').length"),count);

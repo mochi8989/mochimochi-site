@@ -1,0 +1,19 @@
+{
+  "family": "DotGothic16",
+  "revision": "9a6cc6b8ce992aff77b69c857c46af0b42cdff76",
+  "modified": false,
+  "files": [
+    {
+      "file": "DotGothic16-Regular.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/9a6cc6b8ce992aff77b69c857c46af0b42cdff76/ofl/dotgothic16/DotGothic16-Regular.ttf",
+      "bytes": 2069236,
+      "sha256": "3ad9af88726d42b40f7f365f0dcac785af73cf20ea6f1d5b44e57cc21150b8f1"
+    },
+    {
+      "file": "OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/9a6cc6b8ce992aff77b69c857c46af0b42cdff76/ofl/dotgothic16/OFL.txt",
+      "bytes": 4492,
+      "sha256": "b6630c61ea078cacd7fabe37d14ffe557a0b45b06683374a9aa9e24262993e33"
+    }
+  ]
+}

@@ -9,3 +9,5 @@
 *.svg text eol=lf
 *.py text eol=lf
 *.cmd text eol=crlf
+# Preserve the upstream font license verbatim, including its trailing spaces.
+assets/fonts/OFL.txt whitespace=-blank-at-eol

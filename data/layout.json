@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "pages": [
+    {"id":"home","title":"ホーム","slug":"index.html","enabled":false},
+    {"id":"profile","title":"プロフィール","slug":"profile.html","enabled":false},
+    {"id":"gallery","title":"ギャラリー","slug":"gallery.html","enabled":false},
+    {"id":"games","title":"ゲーム","slug":"games.html","enabled":false},
+    {"id":"shop","title":"ショップ","slug":"shop.html","enabled":false},
+    {"id":"links","title":"リンク","slug":"links.html","enabled":false}
+  ]
+}

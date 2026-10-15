@@ -1,0 +1,64 @@
+"""初期サイトのHTML・オリジナルSVGを生成。通常の更新に実行は不要。"""
+from pathlib import Path
+import html
+
+ROOT = Path(__file__).resolve().parent.parent
+IMAGES = ROOT / 'assets/images'
+IMAGES.mkdir(parents=True, exist_ok=True)
+ICONS = {
+ 'home': 'M3 10h3V7h3V4h6v3h3v3h3v11h-7v-7h-4v7H3Z',
+ 'profile': 'M8 2h8v3h3v8h-3v3H8v-3H5V5h3Zm-4 16h16v5H4Z',
+ 'gallery': 'M2 3h20v18H2Zm3 3v12h14V6ZM7 8h3v3H7Zm3 7h3v-3h3v3h2v2H6v-2Z',
+ 'games': 'M5 5h14v3h3v12h-6v-3H8v3H2V8h3Zm1 4v3H3v2h3v3h2v-3h3v-2H8V9Zm10 1v3h3v-3Zm-3 4v3h3v-3Z',
+ 'shop': 'M3 3h18v3h2v5h-2v11H3V11H1V6h2Zm3 10v6h4v-6Zm8 0v6h4v-6Z',
+ 'links': 'M13 2h8v8h-3V7h-2v3h-3v3h-3v-3h3V7h3V5h-3ZM3 8h6v3H6v9h12v-6h3v9H3Z'
+}
+def icon(name):
+ return f'<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="{ICONS[name]}"/></svg>'
+for key,path in ICONS.items():
+ (IMAGES / f'icon-{key}.svg').write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#a8daff" d="{path}"/></svg>',encoding='utf-8')
+
+whale = '''<g shape-rendering="crispEdges"><path fill="#355583" d="M5 12h3V8h5V5h17v3h5v4h4v3h5v-5h4V5h4v12h-4v5h-8v4h-6v5H16v-3H9v-4H5Z"/><path fill="#7db8de" d="M5 11h4V7h5V4h17v3h5v4h4v5h5v-6h4V6h4v10h-4v5h-9v4h-6v4H16v-3H9v-4H5Z"/><path fill="#a8dbed" d="M9 20h7v3h22v2h-4v4H16v-3H9Z"/><path fill="#94cce7" d="M14 7h16v3H14Z"/><path fill="#5d96c1" d="M25 20h9v8h-4v4h-5Z"/><path fill="#10213c" d="M10 14h3v3h-3Z"/><path fill="#d5eff7" d="M10 14h1v1h-1Z"/><path fill="#e8b9c5" d="M6 18h5v2H6Z"/><path fill="#243f64" d="M13 19h6v1h-6Z"/></g>'''
+(IMAGES/'whale.svg').write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 38">{whale}</svg>',encoding='utf-8')
+stars=''.join(f'<rect x="{(i*131+29)%960}" y="{(i*67+15)%360}" width="{2 if i%3 else 3}" height="{2 if i%3 else 3}" fill="{["#a0bddf","#f2dea1","#516f9a"][i%3]}"/>' for i in range(90))
+sparkles=''.join(f'<path d="M{x} {y-6}v12m-6-6h12" stroke="#f4dfa1" stroke-width="3"/>' for x,y in [(530,110),(831,82),(899,244),(590,305),(737,161)])
+scene=f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" shape-rendering="crispEdges"><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#101d3b"/><stop offset="1" stop-color="#213a62"/></linearGradient></defs><path fill="url(#sky)" d="M0 0h960v500H0Z"/>{stars}<path fill="#ecdba0" d="M760 48h35v7h10v31h-9v9h-35v-8h-9V58h8Z"/><path fill="#162745" d="M779 45h25v9h8v24h-8v8h-25v-8h-8V54h8Z"/><path d="M650 84h-32v18h-29v23h-24" stroke="#45638b" stroke-width="1" fill="none"/>{sparkles}<g opacity=".7" fill="#2c4971"><path d="M570 187h35v-7h50v7h25v7h-110Z"/><path d="M810 144h55v-8h30v8h40v8H810Z"/></g><g transform="translate(593 213) scale(5)">{whale}</g><path fill="#82bedc" d="M695 207h8v-17h-9v-7h-12v7h13Zm8-8h7v-13h10v-7h-17Z"/><g fill="#243e67"><path d="M0 399h93v-11h97v16h75v-12h80v-14h80v18h91v-17h81v16h120v-14h110v17h133v102H0Z"/></g><path fill="#31547b" d="M0 431h105v-10h77v9h82v-7h80v16h85v-16h109v9h102v-12h109v12h90v-8h121v76H0Z"/><g fill="#577da0"><path d="M492 434h67v3h-67Zm180 18h75v3h-75ZM800 437h39v3h-39Zm-424 21h65v3h-65Zm-223-18h37v3h-37Z"/></g><path fill="#182e50" d="M0 470h85v-8h90v13h92v-9h100v13h128v-11h100v9h93v-13h115v12h157v24H0Z"/><g transform="translate(800 400) scale(2.3)"><path fill="#8caecb" d="M0 10h7V6h10V0h5v7h10v4h8V7h5v15h-5v-5h-8v4H7v-3H0Z"/><path fill="#d0e1e9" d="M3 14h29v5H7v-2H3Z"/><path fill="#152844" d="M6 10h2v2H6Z"/></g></svg>'''
+(IMAGES/'star-ocean.svg').write_text(scene,encoding='utf-8')
+(IMAGES/'placeholder.svg').write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><path fill="#192a48" d="M0 0h400v300H0Z"/><g transform="translate(110 85) scale(3)">{whale}</g><text x="200" y="239" text-anchor="middle" fill="#afbdd5" font-family="monospace" font-size="12" letter-spacing="3">IMAGE COMING SOON</text></svg>',encoding='utf-8')
+
+pages = [('home','index.html','ホーム'),('profile','profile.html','プロフィール'),('gallery','gallery.html','ギャラリー'),('games','games.html','ゲーム'),('shop','shop.html','ショップ'),('links','links.html','リンク')]
+def empty(title,copy,key='whale'):
+ visual='<img src="assets/images/whale.svg" width="136" height="90" alt="" loading="lazy">' if key=='whale' else icon(key)
+ return f'<div class="empty-state" data-empty>{visual}<h2>{title}</h2><p>{copy}</p><span class="tag">COMING SOON · 準備中</span></div>'
+def heading(key,title,description):
+ return f'<div class="page-heading"><p class="eyebrow">{key.upper()} / もっちーもちもち</p><h1>{title}</h1><p>{description}</p></div>'
+destinations=''.join(f'<a class="destination" href="{file}"><span class="arrow" aria-hidden="true">↗</span>{icon(key)}<b>{key.upper()}</b><small>{label}</small></a>' for key,file,label in pages[1:5])
+home=f'''<section class="hero" aria-labelledby="home-title"><img class="hero-art" src="assets/images/star-ocean.svg" width="960" height="500" alt="星空の海を泳ぐドット絵のクジラとサメ"><div class="hero-content"><p class="eyebrow">WELCOME TO MY LITTLE UNIVERSE</p><h1 id="home-title"><span>もっちー</span><span>もちもち</span></h1><p class="intro">星の海で、ひとやすみ。<br>ここは、もっちーもちもちの<br>小さなインターネットのおうち。</p><a class="button" href="profile.html"><span aria-hidden="true">▶</span> はじめまして、もっちーです</a></div><span class="hero-coordinate">MOCHI'S WORLD · STARRY OCEAN</span></section>
+<div class="welcome window"><span class="cursor" aria-hidden="true">▶</span><p><strong>ようこそ、旅人さん。</strong><br>気になる場所を選んで、ゆっくり遊んでいってね。</p></div>
+<section class="section"><div class="section-heading"><h2>どこへ行く？</h2><small>SELECT YOUR DESTINATION</small></div><div class="destinations">{destinations}</div></section>
+<div class="home-bottom"><section class="section"><div class="section-heading"><h2>お知らせ</h2><small>INFORMATION</small></div><ul class="news-list" data-news><li class="quiet"><b>お知らせは準備中です</b><p>新しいお知らせは、こちらにお届けします。</p></li></ul></section><section class="section"><div class="section-heading"><h2>ほかの世界へ</h2><a href="links.html">すべて見る ↗</a></div><div class="socials-compact" data-socials="compact"></div><p class="subtle">配信や日々のことはこちらから。<br>リンク先は新しいタブで開きます。</p></section></div>'''
+profile=heading('profile','はじめまして。','この星空のおうちの住人をご紹介します。')+'''<section class="profile-layout"><div class="portrait" data-portrait><img src="assets/images/whale.svg" width="232" height="152" alt="プロフィール画像は準備中です"><span>CHARACTER / COMING SOON</span></div><div class="profile-copy"><span class="tag">VTuber / Creator</span><h2>もっちーもちもち</h2><p data-bio>VTuber・クリエイターとして活動しています。</p><dl><div><dt>活動名</dt><dd>もっちーもちもち</dd></div><div><dt>活動開始日</dt><dd><time datetime="2021-02-26" data-started>2021年2月26日</time></dd></div></dl><a class="button secondary" href="links.html">配信・SNSを見にいく ↗</a></div></section>'''
+gallery=heading('gallery','作品のかけら。','イラストやドット絵。小さな世界を、ひとつずつ。')+'''<div class="filters" data-filters role="group" aria-label="作品のカテゴリ"></div><p class="collection-count" data-count aria-live="polite">00 WORKS</p><div class="cards" data-gallery></div>'''+empty('この星に、作品が届くまで。','ギャラリーは準備中です。<br>公開できる作品がそろったら、ここに並びます。')+'''<dialog id="art-dialog" aria-labelledby="art-title" aria-describedby="art-description"><div class="dialog-bar"><span>GALLERY / VIEW</span><button type="button" class="dialog-close" aria-label="拡大表示を閉じる" autofocus>×</button></div><img class="dialog-image" alt=""><div class="dialog-copy"><h2 id="art-title"></h2><p id="art-description"></p></div></dialog>'''
+games=heading('games','次の冒険を、準備中。','自作ゲームの世界への入り口です。')+'<div class="cards" data-collection="games"></div>'+empty('新しい冒険は、ここから。','ゲームの紹介は準備中です。<br>公開する作品の情報を、こちらに掲載します。','games')
+shop=heading('shop','小さなおみせ。','グッズ・絵本・デジタル作品の販売情報をお届けします。')+'<div class="window shop-link" data-shop-link></div><div class="cards" data-collection="shop"></div>'+empty('おみせの棚は、ただいま準備中。','商品情報を公開するまで、もう少しお待ちください。<br>お買い物は、各商品の外部販売ページから。','shop')
+links=heading('links','つながる、星の向こう。','配信、動画、日々のお知らせ。お好きな入り口からどうぞ。')+'<div class="links-grid" data-socials="full"></div><p class="subtle">↗ のあるリンクは新しいタブで開きます。</p>'
+contents=dict(home=home,profile=profile,gallery=gallery,games=games,shop=shop,links=links)
+contents['home']=contents['home'].replace('data-news>', 'data-news data-widget="news">').replace('data-socials="compact"','data-socials="compact" data-widget="compact"')
+for key,marker in [('gallery','<div class="filters"'),('games','<div class="cards"'),('shop','<div class="window shop-link"'),('links','<div class="links-grid"')]:
+ position=contents[key].index(marker)
+ contents[key]=contents[key][:position]+f'<div data-widget="{key}">'+contents[key][position:]+'</div>'
+contents['gallery']=contents['gallery'].replace('<img class="dialog-image" alt="">','<img class="dialog-image" src="assets/images/placeholder.svg" alt="">')
+widget_content={key:contents[key].split(f'<div data-widget="{key}">',1)[1][:-6] for key in ['gallery','games','shop','links']}
+widget_content['news']='<ul class="news-list" data-news><li class="quiet"><b>お知らせは準備中です</b><p>新しいお知らせは、こちらにお届けします。</p></li></ul>'
+widget_content['compact']='<div class="socials-compact" data-socials="compact"></div>'
+templates=''.join(f'<template data-kind="{key}">{value}</template>' for key,value in widget_content.items())
+(ROOT/'widgets.html').write_text('''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>活動情報 | もっちーもちもち</title><meta name="description" content="もっちーもちもちの活動情報"><meta name="robots" content="noindex"><link rel="icon" href="assets/images/whale.svg"><link rel="stylesheet" href="assets/css/style.css"><style>body{background:transparent}body::before{display:none}main{animation:none}.empty-state{box-shadow:none}</style><script defer src="data/site.js"></script><script defer src="data/news.js"></script><script defer src="data/gallery.js"></script><script defer src="data/games.js"></script><script defer src="data/shop.js"></script><script defer src="assets/js/widgets.js"></script><script defer src="assets/js/app.js"></script></head><body><main id="widget-root"></main>'''+templates+'</body></html>',encoding='utf-8')
+descriptions=dict(home='VTuber・クリエイター「もっちーもちもち」の個人サイト。配信や作品の世界を、星空のホームページから探索しよう。',profile='もっちーもちもちのプロフィール。2021年2月26日からVTuber・クリエイターとして活動しています。',gallery='もっちーもちもちのイラスト・ドット絵ギャラリー。',games='もっちーもちもちの自作ゲーム紹介ページ。',shop='もっちーもちもちのグッズ・絵本・デジタル作品の販売情報。',links='もっちーもちもちのTwitch・YouTube・Xなど、配信・SNSリンク。')
+for key,file,label in pages:
+ nav=''.join(f'<a href="{f}"'+(' aria-current="page"' if k==key else '')+f'>{icon(k)}<span><b>{k.upper()}</b><small>{l}</small></span></a>' for k,f,l in pages)
+ title=f'{label} | もっちーもちもち' if key!='home' else 'もっちーもちもち | 星空の小さなおうち'
+ doc=f'''<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title><meta name="description" content="{descriptions[key]}"><meta name="theme-color" content="#0b142c"><meta property="og:title" content="{title}"><meta property="og:description" content="{descriptions[key]}"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><link rel="icon" type="image/svg+xml" href="assets/images/whale.svg"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/layout.css"><script defer src="data/site.js"></script><script defer src="data/news.js"></script><script defer src="data/gallery.js"></script><script defer src="data/games.js"></script><script defer src="data/shop.js"></script><script defer src="assets/js/app.js"></script><script defer src="assets/js/layout.js"></script></head>
+<body data-page="{key}" id="top"><a class="skip" href="#main">本文へスキップ</a><div class="stars" aria-hidden="true"></div><div id="site-shell"><header class="site-header"><a class="brand" href="index.html"><img src="assets/images/whale.svg" width="46" height="31" alt=""><span><strong>もっちーもちもち</strong><small>MOCHI MOCHI · PERSONAL WEBSITE</small></span></a><div class="header-note"><span>✦</span> A LITTLE PLACE AMONG THE STARS</div></header><div class="world"><aside class="sidebar"><nav class="window" aria-label="メインメニュー"><div class="window-title">MAIN MENU</div><div class="menu">{nav}</div></nav><div class="sidebar-bottom"><div class="tiny-stars" aria-hidden="true">· ✦ ·</div><img src="assets/images/whale.svg" width="72" height="47" alt="" loading="lazy"><p>星の海を、のんびりと。</p><p>どうぞ、ごゆっくり。</p></div></aside><main id="main" tabindex="-1"><div class="breadcrumb"><a href="index.html">MOCHI'S WORLD</a><span>/</span><span>{key.upper()}</span></div>{contents[key]}<noscript><p class="noscript">作品データとSNSリンクの表示にはJavaScriptを有効にしてください。各ページへの移動は上のメニューから行えます。</p></noscript></main></div><footer class="site-footer"><span>© もっちーもちもち · ALL RIGHTS RESERVED.</span><span>THANK YOU FOR VISITING <span aria-hidden="true">✦</span></span><a href="#top">ページの上へ ↑</a></footer></div><main id="custom-layout" hidden aria-label="ページ本文"></main></body></html>'''
+ (ROOT/file).write_text(doc,encoding='utf-8')
+print('Generated 6 HTML pages and 9 original SVG assets.')
